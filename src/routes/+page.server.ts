@@ -9,7 +9,11 @@ type recipeForm = {
 
 
 export const load: PageServerLoad = async () => {
-	const recipes = await db.query.Recipes.findMany();
+	const recipes = await db.query.Recipes.findMany({
+		with: {
+			ingredients: true,
+			steps: true
+		}})
 
 	return {
 		recipes
@@ -25,7 +29,6 @@ export const actions = {
 			title: data.get('title') as string,
 			description: data.get('description') as string
 		}
-		console.log(recipe);
 
 		// Insert the recipe into the database
 		const recipes =
