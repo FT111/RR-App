@@ -6,6 +6,7 @@ export const Recipes = sqliteTable("recipes", {
 	id: text("id").primaryKey().$defaultFn(()=>uuid()),
 	title: text().notNull().unique(),
 	description: text().notNull(),
+	hexColour: text("hex_colour"),
 	createdAt: integer("created_at").$defaultFn(()=>Date.now()).notNull(),
 	updatedAt: integer("updated_at").$defaultFn(()=>Date.now()).notNull(),
 })
