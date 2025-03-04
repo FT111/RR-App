@@ -7,12 +7,17 @@
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
-    font-family: "Cal Sans";
+    font-family: "Lexend";
     font-style: normal;
-    font-weight: 600;
+    font-weight: auto;
     font-display: swap;
-    src: url("/CalSans-SemiBold.woff2") format("woff2");
+    src: url("/fonts/Lexend-VariableFont_wght.ttf") format("truetype");
 }
+
+* {
+    font-family: "Lexend", sans-serif;
+}
+
 
 :root {
     /* Colors */
