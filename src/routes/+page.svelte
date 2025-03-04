@@ -26,7 +26,7 @@
 	}
 }>
 	{#if page.state.selectedRecipe}
-		<RecipePage data={page.state.selectedRecipe} />
+		<RecipePage data={page.state.selectedRecipe} dialogView={true} />
 	{/if}
 </RecipeDetails>
 
