@@ -1,6 +1,7 @@
 import * as schema from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
 import type { Actions, PageServerLoad } from './$types';
+import { getRecipes } from '$lib/server/db/queries/recipes';
 
 type recipeForm = {
 	title: string;
@@ -9,15 +10,7 @@ type recipeForm = {
 
 
 export const load: PageServerLoad = async () => {
-	const recipes = await db.query.Recipes.findMany({
-		with: {
-			ingredients: true,
-			steps: true
-		}})
-
-	return {
-		recipes
-	}
+	return getRecipes();
 }
 
 export const actions = {
