@@ -1,6 +1,6 @@
 // CRUD operations for recipes
 import { db } from '$lib/server/db';
-import { Recipes } from '$lib/server/db/schema';
+import { Ingredients, Recipes, Steps } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
 export const getRecipes = async () => {
@@ -15,17 +15,43 @@ export const getRecipes = async () => {
 	}
 }
 
-export const updateRecipe = async (recipe: typeof Recipes.$inferSelect)=> {
-	const recipes = await db.update(Recipes)
-		.set({
-			title: recipe.title,
-			description: recipe.description,
-			hexColour: recipe.hexColour,
-			svgIcon: recipe.svgIcon
-		}).where(eq(Recipes.id, recipe.id))
-		.returning({id: Recipes.id})
+
+export type ExistingRecipeWithIngredientAndSteps = typeof Recipes.$inferInsert & {
+	id: string
+	ingredients: typeof Ingredients.$inferInsert[]
+	steps: typeof Recipes.$inferInsert[]
+}
+
+export const updateRecipe = async (recipe: ExistingRecipeWithIngredientAndSteps)=> {
+	try {
+		await db.update(Recipes)
+			.set({
+				title: recipe.title,
+				description: recipe.description,
+				hexColour: recipe.hexColour,
+				svgIcon: recipe.svgIcon
+			}).where(eq(Recipes.id, recipe.id))
+
+		// Update related ingredients and steps
+		await db.transaction(async (db) => {
+			if (recipe.ingredients.length > 0) {
+				await db.delete(Ingredients).where(eq(Ingredients.recipeId, recipe.id))
+				await db.insert(Ingredients).values(recipe.ingredients)
+			}
+			if (recipe.steps.length > 0) {
+				await db.delete(Steps).where(eq(Steps.recipeId, recipe.id))
+				await db.insert(Steps).values(recipe.steps)
+			}
+		}
+		)
+	} catch (e) {
+		return {
+			error: e
+		}
+	}
+
 	return {
-		recipes
+		error: false
 	}
 }
 
