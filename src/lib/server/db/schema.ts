@@ -19,7 +19,8 @@ export const RecipeRelations = relations(Recipes, ({many}) => ({
 
 export const Ingredients = sqliteTable("ingredients", {
 	id: text("id").primaryKey().$defaultFn(()=>uuid()),
-	name: text().notNull().unique(),
+	name: text().notNull(),
+	required: integer().default(1),
 	recipeId: text("recipe_id").notNull().references(() => Recipes.id),
 	createdAt: integer("created_at").$defaultFn(()=>Date.now()).notNull()
 })
@@ -32,7 +33,7 @@ export const IngredientRelations = relations(Ingredients, ({one}) => ({
 export const Steps = sqliteTable("steps", {
 	id: text("id").primaryKey().$defaultFn(()=>uuid()),
 	description: text().notNull(),
-	position: integer().notNull().unique(),
+	position: integer().notNull(),
 	recipeId: text("recipe_id").notNull().references(() => Recipes.id),
 	createdAt: integer("created_at").$defaultFn(()=>Date.now()).notNull(),
 })
