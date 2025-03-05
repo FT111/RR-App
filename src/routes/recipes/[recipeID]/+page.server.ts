@@ -1,10 +1,15 @@
-import type { PageServerLoad } from '../../../../.svelte-kit/types/src/routes/$types';
+import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { Recipes } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
+interface pageParams {
+	params: {
+		recipeID: string;
+	}
+}
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params }: pageParams) => {
 	const recipe = await db.query.Recipes.findFirst({
 		where: eq(Recipes.id, params.recipeID),
 		with: {

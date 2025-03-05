@@ -18,6 +18,7 @@
 <Dialog.Root open={!!recipe} onOpenChange={()=>{
 	if (recipe) {
 		closeCallback();
+	} else {dialogBox.focus()
 	}
 }}>
 	<Dialog.Portal>
