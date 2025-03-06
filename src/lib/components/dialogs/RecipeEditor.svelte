@@ -4,6 +4,8 @@
 	import Input from '$lib/components/Input.svelte';
 	import Button from '$lib/components/buttons/Button.svelte';
 	import { scale, fly} from 'svelte/transition';
+	import { onMount } from 'svelte';
+	import Ingredient from '$lib/components/badges/Ingredient.svelte';
 
 	interface Props {
 		selectedRecipe: typeof Recipes.$inferSelect | null;
@@ -12,9 +14,8 @@
 
 	let { selectedRecipe, isOpen=$bindable() }: Props = $props();
 	// Create a new recipe object for updates/creation
-	let updatedRecipe = $state(selectedRecipe);
+	let updatedRecipe = $state(JSON.parse(JSON.stringify(selectedRecipe)));
 	$effect(() => {
-		updatedRecipe = selectedRecipe;
 		if (selectedRecipe === null) {
 			updatedRecipe = {
 				title: '',
@@ -29,10 +30,12 @@
 	$effect(() => {
 		if (selectedRecipe) {
 			isOpen = true;
+			updatedRecipe = JSON.parse(JSON.stringify(selectedRecipe));
 		}
 	});
 
-	$inspect(updatedRecipe, selectedRecipe)
+	$inspect(updatedRecipe)
+	$inspect(selectedRecipe)
 
 	const handleSubmit = async (e: Event) => {
 		e.preventDefault();
@@ -51,6 +54,7 @@
 </script>
 
 <Dialog.Root bind:open={isOpen}>
+
 	<Dialog.Portal>
 		<Dialog.Overlay
 										class="data-[state=open]:animate-in data-[state=closed]:animate-out backdrop-blur-sm data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80"
@@ -66,9 +70,26 @@
 				</Dialog.Title>
 				<Separator.Root class="bg-muted -mx-5 mb-6 mt-5 block h-px" />
 
-				<form class="size-full max-h-96 overflow-y-auto" onsubmit={(e)=>{handleSubmit(e)}} id="recipeForm">
+				<form class="flex flex-col gap-1.5 size-full max-h-96 overflow-y-auto" onsubmit={(e)=>{handleSubmit(e)}} id="recipeForm">
 					<Input placeholder={updatedRecipe.title} label="Title" bind:value={updatedRecipe.title} />
 					<Input placeholder={updatedRecipe.description} label="Description" box={true} bind:value={updatedRecipe.description} class="min-h-24 align-text-top" />
+
+					<div class="flex flex-row flex-grow w-full h-24 gap-1.5">
+						<div class="flex flex-col gap-0.5 h-24 w-1/2 basis-1/2">
+								<label for='colourPicker' class="text-sm text-muted-foreground">Colour</label>
+								<input id="colourPicker" class="h-16 w-full rounded-xl p-3 bg-slate-50 hover:bg-slate-100 transition-colors border-none aria-selected:border-none aria-selected:outline-1.5 outline outline-0
+							aria-selected:ring-none !ring-none !shadow-none !outline-none outline-white ring-white ring-offset-none aria-selected:outline-slate-500"
+									 type="color" bind:value={updatedRecipe.hexColour} />
+						</div>
+						<Input class=" !h-16 !w-full " box type="text" placeholder="Icon" label="Icon (SVG)" bind:value={updatedRecipe.svgIcon} />
+					</div>
+
+<!--				Ingredients	-->
+					<div class="flex flex-row gap-1.5 flex-wrap w-full">
+						{#each updatedRecipe.ingredients as ingredient, index (ingredient.id)}
+							<Ingredient editable={true} bind:ingredient={updatedRecipe.ingredients[index]} />
+						{/each}
+					</div>
 
 				</form>
 
