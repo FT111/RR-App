@@ -201,7 +201,16 @@
 			</div>
 			<div class="w-full flex flex-row justify-end p-2.5 bg-slate-50">
 				<div class="flex flex-row gap-3 items-center">
-
+					{#if isChanges}
+						<div class="flex flex-row gap-2 items-center z-0" transition:fly={{x:100, duration: 200, easing: quartOut}}>
+							Unsaved changes
+							<button aria-label="Discard changes" onclick={()=>{
+								updatedRecipe = JSON.parse(JSON.stringify(selectedRecipe));
+							}}>
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+							</button>
+						</div>
+					{/if}
 					<Button
 						class=" !bg-emerald-700 !font-medium text-white cursor-pointer gap-2.5 z-10 {isChanges || '!bg-slate-200 !text-muted-foreground'}"
 						form="recipeForm"
