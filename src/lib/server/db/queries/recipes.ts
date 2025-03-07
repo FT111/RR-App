@@ -19,7 +19,7 @@ export const getRecipes = async () => {
 export type ExistingRecipeWithIngredientAndSteps = typeof Recipes.$inferInsert & {
 	id: string
 	ingredients: typeof Ingredients.$inferInsert[]
-	steps: typeof Recipes.$inferInsert[]
+	steps: typeof Steps.$inferInsert[]
 }
 
 export const updateRecipe = async (recipe: ExistingRecipeWithIngredientAndSteps)=> {
@@ -31,6 +31,8 @@ export const updateRecipe = async (recipe: ExistingRecipeWithIngredientAndSteps)
 				hexColour: recipe.hexColour,
 				svgIcon: recipe.svgIcon
 			}).where(eq(Recipes.id, recipe.id))
+
+		console.log(recipe)
 
 		// Update related ingredients and steps
 		await db.transaction(async (db) => {
