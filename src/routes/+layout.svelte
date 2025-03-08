@@ -1,14 +1,12 @@
 <script lang="ts">
 	import '../app.css';
-	import { Button } from 'bits-ui';
 	import { page } from '$app/state';
-	import { onMount } from 'svelte';
 
 	let { children } = $props();
 
 	const menuItems = [
 		{
-			title: 'Drinks',
+			title: 'Recipes',
 			href: '/',
 			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>\n'
 		},
@@ -23,7 +21,7 @@
 </script>
 
 <nav class="h-1/12 p-4 flex flex sticky top-0 gap-3 items-center w-full bg-background">
-	<h2 class="text-xl font-medium tracking-tight">Drink Recipes</h2>
+	<h2 class="text-xl font-medium tracking-tight">Recipes</h2>
 	<div class="flex flex-row gap-1.5">
 		{#each menuItems as item (item.title)}
 		<Button.Root href={`${item.href}`} class="{selectedItem === item.href && 'bg-slate-200'}
