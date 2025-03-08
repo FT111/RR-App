@@ -35,7 +35,7 @@
 		<IngredientBadge ingredient={{name: 'Ingredients', required: true}} snippet={badgeSnippet}
 						class="bg-slate-100" />
 
-		{#each data.recipe?.ingredients as ingredient}
+		{#each data.recipe?.ingredients as ingredient (ingredient.name)}
 			{#if !ingredient.required}
 				<IngredientBadge ingredient={ingredient} class="bg-slate-200"/>
 			{:else}
@@ -46,7 +46,7 @@
 	</div>
 
 	<div class="flex flex-col gap-2 p-1 {dialogView ? 'w-full' : 'md:w-96 w-full'}">
-		{#each data.recipe?.steps as step (step.id)}
+		{#each data.recipe?.steps as step (step.description)}
 			<div class="flex flex-row gap-2.5 items-center justify-start content-center h-10 bg-slate-100 rounded-xl p-2.5">
 				<div class="flex flex-row gap-2 items-center text-muted-foreground justify-start w-full text-left">
 					{step.position+1}

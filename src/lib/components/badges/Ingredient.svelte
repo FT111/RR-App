@@ -21,6 +21,8 @@
             <div class="flex flex-row {editable && '!text-black'}">
                 {#if editable}
                     <button
+                      form="none"
+                      type="button"
                       class="p-0.5 rounded-lg hover:bg-destructive/30 bg-transparent transition-colors items-center cursor-pointer"
                         aria-label="Remove ingredient"
                         onclick={()=>{

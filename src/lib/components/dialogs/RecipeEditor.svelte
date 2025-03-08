@@ -9,7 +9,7 @@
 	import { flip } from 'svelte/animate';
 	import { onMount } from 'svelte';
 	import Ingredient from '$lib/components/badges/Ingredient.svelte';
-	import { beforeNavigate } from '$app/navigation';
+	import { beforeNavigate, invalidateAll } from '$app/navigation';
 	import type { BeforeNavigate } from '@sveltejs/kit';
 
 	interface Props {
@@ -22,6 +22,8 @@
 	let updatedRecipe = $state(JSON.parse(JSON.stringify(selectedRecipe)));
 	let sortedRecipeStepsByPosition = $derived(updatedRecipe?.steps.map(step=>(step)));
 	let isChanges = $derived(JSON.stringify(selectedRecipe) !== JSON.stringify(updatedRecipe))
+	let ingredientForm: HTMLFormElement;
+	let stepForm: HTMLFormElement;
 
 	$effect(() => {
 		if (selectedRecipe === null) {
@@ -32,6 +34,7 @@
 				steps: [],
 			};
 		}
+		ingredientForm.reset();
 	});
 
 	// Open the dialog if a recipe is selected or a new recipe is being created
@@ -64,6 +67,7 @@
 		});
 
 		isOpen = false;
+		await invalidateAll();
 	};
 
 	function swapSteps(position: number, positionTwo: number) {
@@ -75,7 +79,41 @@
 		updatedRecipe.steps[positionTwo] = step;
 		updatedRecipe.steps[positionTwo].position = positionTwo;
 	}
+
 </script>
+
+<form bind:this={ingredientForm} class="hidden" id="ingredientForm" onsubmit={(e)=>{
+	e.preventDefault();
+	const formData = new FormData(e.target);
+	const ingredient = formData.get('ingredient');
+
+	if (ingredient) {
+		updatedRecipe.ingredients.push({
+			name: ingredient.toString(),
+			required: 0,
+		});
+	}
+	ingredientForm.reset();
+
+}}>
+</form>
+
+<form bind:this={stepForm} class="hidden" id="stepForm" onsubmit={(e)=>{
+	e.preventDefault();
+	const formData = new FormData(e.target);
+	const step = formData.get('step');
+
+	if (step) {
+		updatedRecipe.steps.push({
+			description: step.toString(),
+			position: updatedRecipe.steps.length,
+		});
+	}
+	stepForm.reset();
+}}>
+
+</form>
+
 
 <Dialog.Root bind:open={isOpen}>
 
@@ -97,9 +135,11 @@
 				<form class="flex flex-col md:flex-row gap-4 size-full max-h-96 overflow-y-auto" onsubmit={(e)=>{handleSubmit(e)}} id="recipeForm">
 <!--			Main detail section		-->
 					<div class="flex flex-col gap-1.5 basis-1/2 h-full">
-
-						<Input placeholder={updatedRecipe.title} label="Title" bind:value={updatedRecipe.title} />
-						<Input placeholder={updatedRecipe.description} label="Description" box={true} bind:value={updatedRecipe.description} class="min-h-24 align-text-top" />
+						<Input required placeholder={updatedRecipe.title} label="Title"
+									 bind:value={updatedRecipe.title} maxlength="50" minlength="1" />
+						<Input required placeholder={updatedRecipe.description} label="Description" box={true}
+									 bind:value={updatedRecipe.description} class="min-h-24 align-text-top"
+						maxlength="100" minlength="1" />
 
 						<div class="flex flex-row flex-grow w-full h-24 gap-1.5">
 							<div class="flex flex-col gap-0.5 h-24 w-1/2 basis-1/2">
@@ -113,7 +153,7 @@
 
 	<!--				Ingredients	-->
 						<div class="flex flex-row gap-1.5 flex-wrap w-full">
-							{#each updatedRecipe.ingredients as ingredient, index (ingredient.id)}
+							{#each updatedRecipe.ingredients as ingredient, index}
 								<Ingredient editable={true} bind:ingredient={updatedRecipe.ingredients[index]} removeIngredientCallback={
 								() => {
 									updatedRecipe.ingredients.splice(index, 1);
@@ -121,15 +161,21 @@
 								} />
 							{/each}
 							<div class="flex flex-row p-2 px-3 rounded-3xl text-xs w-40 text-sm bg-emerald-200 border border-emerald-600 border-dashed">
-								<input placeholder="Add an ingredient" class="w-full !ring-offset-none !ring-none !shadow-none !outline-none !ring-0 ring-offset-0 ring-transparent" />
-								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-foreground"><path d="M5 12h14"/><path d="M12 5v14"/></svg>							</div>
+								<input form="ingredientForm" name="ingredient" placeholder="Add an ingredient" class="w-full !ring-offset-none !ring-none !shadow-none !outline-none !ring-0 ring-offset-0 ring-transparent" />
+								<button
+									form="ingredientForm"
+									aria-label="Add ingredient"
+									type="submit">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-foreground"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+								</button>
 						</div>
+					</div>
 					</div>
 
 <!--			Steps		-->
 					<div class="flex flex-col gap-1.5 h-full basis-1/2">
 						{#each sortedRecipeStepsByPosition as step, index (step)}
-							<div transition:fly={{y:50}} animate:flip={{duration: 275, easing: backOut}} class="flex flex-row gap-2.5 items-center transition-all justify-start content-center gap-2 h-10 bg-slate-100 rounded-xl p-2.5 peer-focus:bg-slate-300">
+							<div transition:fly={{y:-50}} animate:flip={{duration: 275, easing: backOut}} class="flex flex-row gap-2.5 items-center transition-all justify-start content-center gap-2 h-10 bg-slate-100 rounded-xl p-2.5 peer-focus:bg-slate-300">
 								<span class="text-muted-foreground">{step.position+1}</span>
 								<input class="w-full rounded-md text-sm peer !ring-offset-none !ring-none !shadow-none !outline-none !ring-0 ring-offset-0 ring-transparent p-1 peer" type="text" placeholder="Step Description" bind:value={updatedRecipe.steps[index].description} />
 								<div class="flex flex-row w-20">
@@ -181,7 +227,7 @@
 						<div class="flex flex-row gap-2.5 items-center justify-start content-center gap-2 h-10 text-foreground
 						 bg-emerald-200 rounded-xl p-2.5 border border-dashed border-emerald-600 peer-focus:bg-slate-300">
 							<span class="text-muted-foreground">{updatedRecipe.steps.length+1}</span>
-							<input class="w-full text-sm rounded-md peer !ring-offset-none !ring-none !shadow-none !outline-none !ring-0 ring-offset-0 ring-transparent p-1 peer" type="text" placeholder="Add a step" />
+							<input name="step" form="stepForm" class="w-full text-sm rounded-md peer !ring-offset-none !ring-none !shadow-none !outline-none !ring-0 ring-offset-0 ring-transparent p-1 peer" type="text" placeholder="Add a step" />
 							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
 						</div>
 
@@ -200,19 +246,18 @@
 				</Dialog.Close>
 			</div>
 			<div class="w-full flex flex-row justify-end p-2.5 bg-slate-50">
-				<div class="flex flex-row gap-3 items-center">
+				<div class="flex flex-row gap-2 items-center">
 					{#if isChanges}
-						<div class="flex flex-row gap-2 items-center z-0" transition:fly={{x:100, duration: 200, easing: quartOut}}>
-							Unsaved changes
-							<button aria-label="Discard changes" onclick={()=>{
-								updatedRecipe = JSON.parse(JSON.stringify(selectedRecipe));
+						<button class="flex flex-row gap-2 items-center z-0 cursor-pointer hover:bg-slate-200 p-1.5 px-2.5 transition-colors rounded-3xl" transition:fly={{x:60, duration: 175, easing: quartOut}}
+										aria-label="Discard changes" onclick={()=>{
+										updatedRecipe = JSON.parse(JSON.stringify(selectedRecipe));
 							}}>
+							Unsaved changes
 								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
 							</button>
-						</div>
 					{/if}
 					<Button
-						class=" !bg-emerald-700 !font-medium text-white cursor-pointer gap-2.5 z-10 {isChanges || '!bg-slate-200 !text-muted-foreground'}"
+						class="peer-invalid:bg-slate-100 !bg-emerald-700 !font-medium text-white cursor-pointer gap-2.5 z-10 {isChanges || '!bg-slate-200 !text-muted-foreground'}"
 						form="recipeForm"
 						type="submit"
 						disabled={!isChanges}

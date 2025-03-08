@@ -2,6 +2,12 @@
 import { db } from '$lib/server/db';
 import { Ingredients, Recipes, Steps } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
+import { v4 as uuid } from 'uuid';
+
+
+const mapRecipeChildWithIDs = (items: Array<typeof Ingredients.$inferInsert |  typeof Steps.$inferInsert>, recipeId: string): typeof Ingredients.$inferInsert |  typeof Steps.$inferInsert =>
+	items.map(item => ({ ...item, id: uuid(), recipeId }));
+
 
 export const getRecipes = async () => {
 	const recipes = await db.query.Recipes.findMany({
@@ -22,27 +28,44 @@ export type ExistingRecipeWithIngredientAndSteps = typeof Recipes.$inferInsert &
 	steps: typeof Steps.$inferInsert[]
 }
 
-export const updateRecipe = async (recipe: ExistingRecipeWithIngredientAndSteps)=> {
+export const insertRecipeOrUpdateIfExists = async (recipe: ExistingRecipeWithIngredientAndSteps, exists: boolean = true)=> {
 	try {
-		await db.update(Recipes)
-			.set({
+		// If the recipe exists, update it, otherwise insert it
+		// Generate a new UUID if the recipe is new
+		recipe.id = exists ? recipe.id : uuid()
+
+		await db.insert(Recipes)
+			.values({
+				id: recipe.id,
 				title: recipe.title,
 				description: recipe.description,
 				hexColour: recipe.hexColour,
 				svgIcon: recipe.svgIcon
-			}).where(eq(Recipes.id, recipe.id))
+			}).onConflictDoUpdate({
+				target: [Recipes.id],
+				set: {
+					title: recipe.title,
+					description: recipe.description,
+					hexColour: recipe.hexColour,
+					svgIcon: recipe.svgIcon
+				},
+				setWhere: eq(Recipes.id, recipe.id)
+			})
 
-		console.log(recipe)
+		// @ts-expect-error: TS please stop complaining
+		const ingredients: typeof Ingredients.$inferInsert = mapRecipeChildWithIDs(recipe.ingredients, recipe.id);
+		// @ts-expect-error: stop
+		const steps: typeof Steps.$inferInsert = mapRecipeChildWithIDs(recipe.steps, recipe.id);
 
 		// Update related ingredients and steps
 		await db.transaction(async (db) => {
-			if (recipe.ingredients.length > 0) {
+			if (ingredients.length > 0) {
 				await db.delete(Ingredients).where(eq(Ingredients.recipeId, recipe.id))
-				await db.insert(Ingredients).values(recipe.ingredients)
+				await db.insert(Ingredients).values(ingredients)
 			}
-			if (recipe.steps.length > 0) {
+			if (steps.length > 0) {
 				await db.delete(Steps).where(eq(Steps.recipeId, recipe.id))
-				await db.insert(Steps).values(recipe.steps)
+				await db.insert(Steps).values(steps)
 			}
 		}
 		)
@@ -54,18 +77,6 @@ export const updateRecipe = async (recipe: ExistingRecipeWithIngredientAndSteps)
 
 	return {
 		error: false
-	}
-}
-
-export const createRecipe = async (recipe: typeof Recipes.$inferSelect)=> {
-	const recipes = await db.insert(Recipes).values({
-		title: recipe.title,
-		description: recipe.description,
-		hexColour: recipe.hexColour,
-		svgIcon: recipe.svgIcon
-	}).returning({id: Recipes.id})
-	return {
-		recipes
 	}
 }
 
