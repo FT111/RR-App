@@ -1,6 +1,5 @@
 
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import Button from '$lib/components/buttons/Button.svelte';
 	import RecipeDetails from '$lib/components/dialogs/RecipeDetails.svelte';
 	import { page } from '$app/state';
@@ -32,8 +31,8 @@
 	{/if}
 </RecipeDetails>
 
-<div class="flex flex-col gap-2.5">
-	<ul class="flex flex-row gap-2.5 items-center justify-center content-center h-screen rounded-2xl flex-wrap">
+<div class="flex flex-col h-screen gap-2.5">
+	<ul class="flex flex-row gap-2.5 items-center justify-center content-center h-11/12 rounded-2xl flex-wrap">
 		{#each data.recipes as recipe (recipe.id)}
 			<li>
 				<Button style="background-color: {recipe.hexColour}" class="!px-3 group rounded-xl w-52 h-52 " href="/recipes/{recipe.id}" onclick={(e: Event)=>{onSelect(e)}}>
@@ -57,10 +56,4 @@
 			</li>
 		{/each}
 	</ul>
-
-	<form class="flex flex-col gap-3.5 p-4 rounded-2xl" method="POST" use:enhance>
-		<input type="text" name="title" placeholder="Recipe Name" />
-		<input type="text" name="description" placeholder="Description" />
-		<button type="submit">Add Recipe</button>
-	</form>
 </div>
