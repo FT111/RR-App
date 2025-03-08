@@ -3,6 +3,8 @@
 	import type { Recipes } from '$lib/server/db/schema';
 	import Button from '$lib/components/buttons/Button.svelte';
 	import RecipeEditor from '$lib/components/dialogs/RecipeEditor.svelte';
+	import RecipeDeletion from '$lib/components/dialogs/RecipeDeletion.svelte';
+
 	interface Props {
 		data: {
 			recipes: typeof Recipes.$inferSelect[];
@@ -31,6 +33,7 @@
 					<div class="flex flex-row gap-2.5 font-normal text-sm items-center">
 						<p class="text-muted-foreground">{recipe.steps?.length} steps</p>
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+						<RecipeDeletion recipe={recipe} />
 					</div>
 				</div>
 			</Button>
