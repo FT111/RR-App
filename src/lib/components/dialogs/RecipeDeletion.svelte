@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Recipes } from '$lib/server/db/schema';
 	import { invalidateAll } from '$app/navigation';
+	import { AlertDialog } from 'bits-ui';
 
 	interface Props {
 		recipe: typeof Recipes.$inferSelect;

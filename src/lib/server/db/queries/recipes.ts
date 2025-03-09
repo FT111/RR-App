@@ -9,6 +9,29 @@ const mapRecipeChildWithIDs = (items: Array<typeof Ingredients.$inferInsert |  t
 	items.map(item => ({ ...item, id: uuid(), recipeId }));
 
 
+const updateRecipeChildren = async (
+	recipe: typeof Recipes.$inferInsert & { id: string },
+) =>{
+	// @ts-expect-error: TS please stop complaining
+	const ingredients: typeof Ingredients.$inferInsert = mapRecipeChildWithIDs(recipe.ingredients, recipe.id);
+	// @ts-expect-error: stop
+	const steps: typeof Steps.$inferInsert = mapRecipeChildWithIDs(recipe.steps, recipe.id);
+
+	// Update related ingredients and steps
+	await db.transaction(async (db) => {
+			if (ingredients.length > 0) {
+				await db.delete(Ingredients).where(eq(Ingredients.recipeId, recipe.id))
+				await db.insert(Ingredients).values(ingredients)
+			}
+			if (steps.length > 0) {
+				await db.delete(Steps).where(eq(Steps.recipeId, recipe.id))
+				await db.insert(Steps).values(steps)
+			}
+		}
+	)
+}
+
+
 export const getRecipes = async () => {
 	const recipes = await db.query.Recipes.findMany({
 		with: {
@@ -52,23 +75,7 @@ export const insertRecipeOrUpdateIfExists = async (recipe: ExistingRecipeWithIng
 				setWhere: eq(Recipes.id, recipe.id)
 			})
 
-		// @ts-expect-error: TS please stop complaining
-		const ingredients: typeof Ingredients.$inferInsert = mapRecipeChildWithIDs(recipe.ingredients, recipe.id);
-		// @ts-expect-error: stop
-		const steps: typeof Steps.$inferInsert = mapRecipeChildWithIDs(recipe.steps, recipe.id);
-
-		// Update related ingredients and steps
-		await db.transaction(async (db) => {
-			if (ingredients.length > 0) {
-				await db.delete(Ingredients).where(eq(Ingredients.recipeId, recipe.id))
-				await db.insert(Ingredients).values(ingredients)
-			}
-			if (steps.length > 0) {
-				await db.delete(Steps).where(eq(Steps.recipeId, recipe.id))
-				await db.insert(Steps).values(steps)
-			}
-		}
-		)
+		await updateRecipeChildren(recipe)
 	} catch (e) {
 		return {
 			error: e

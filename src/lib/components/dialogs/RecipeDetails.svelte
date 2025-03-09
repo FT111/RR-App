@@ -2,6 +2,7 @@
 	import { Dialog, Label, Separator } from "bits-ui";
 	import type { Recipes } from '$lib/server/db/schema';
 	import type { Snippet, SvelteComponent } from 'svelte';
+	import { invalidateAll } from '$app/navigation';
 
 	interface Props {
 		recipe: typeof Recipes.$inferSelect | null;
@@ -28,11 +29,18 @@
 		<Dialog.Content
 			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 outline-hidden fixed left-[50%] top-[50%] z-50 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] border p-5 sm:max-w-[490px] md:w-full"
 		>
-			<Dialog.Title
-				class="flex w-full items-center justify-center text-lg font-semibold tracking-tight"
-			>
-				{recipe?.title}
-			</Dialog.Title>
+			<div class="flex flex-row justify-between items-center">
+				<a href="/recipes/{recipe.id}" aria-label="Open page">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-expand"><path d="m15 15 6 6"/><path d="m15 9 6-6"/><path d="M21 16.2V21h-4.8"/><path d="M21 7.8V3h-4.8"/><path d="M3 16.2V21h4.8"/><path d="m3 21 6-6"/><path d="M3 7.8V3h4.8"/><path d="M9 9 3 3"/></svg>
+				</a>
+				<Dialog.Title
+					class="flex w-full items-center justify-center text-lg font-semibold tracking-tight"
+				>
+					{recipe?.title}
+				</Dialog.Title>
+
+				<div class="w-12"></div>
+			</div>
 			<Separator.Root class="bg-muted -mx-5 mb-6 mt-5 block h-px" />
 
 			<div class="size-full max-h-96 overflow-y-auto">
