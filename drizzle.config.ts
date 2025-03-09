@@ -1,5 +1,5 @@
 import { defineConfig } from 'drizzle-kit';
-if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+if (!process.env.VITE_DATABASE_URL) throw new Error('VITE_DATABASE_URL is not set');
 
 export default defineConfig({
 	schema: './src/lib/server/db/schema.ts',
@@ -7,7 +7,8 @@ export default defineConfig({
 
 	dbCredentials: {
 		// SQLite database file for development
-		url: './src/lib/server/db/database.db'
+		url: process.env.VITE_DATABASE_URL,
+		token: process.env.VITE_DATABASE_TOKEN
 	},
 
 	verbose: true,
