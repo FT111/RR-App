@@ -45,8 +45,6 @@
 		}
 	});
 
-	$inspect(updatedRecipe?.steps)
-
 	beforeNavigate((e: BeforeNavigate)=>{
 		if (JSON.stringify(updatedRecipe) !== JSON.stringify(selectedRecipe) && updatedRecipe !== null && updatedRecipe !== undefined && isOpen) {
 			if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
@@ -78,6 +76,15 @@
 		updatedRecipe.steps[position].position = position;
 		updatedRecipe.steps[positionTwo] = step;
 		updatedRecipe.steps[positionTwo].position = positionTwo;
+	}
+
+	function deleteStep(position: number) {
+		updatedRecipe.steps.splice(position, 1);
+
+		updatedRecipe.steps = updatedRecipe.steps.map((step: typeof updatedRecipe.step, index: number) => {
+			step.position = index;
+			return step;
+		});
 	}
 
 </script>
@@ -214,7 +221,7 @@
 										aria-label="Delete step"
 										class=" cursor-pointer w-full flex flex-row justify-end basis-0"
 										onclick={() => {
-											updatedRecipe.steps.splice(index, 1);
+											deleteStep(step.position);
 										}}
 										type="button"
 									>
