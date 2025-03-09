@@ -24,15 +24,15 @@
 	<h2 class="text-xl font-medium tracking-tight">Recipes</h2>
 	<div class="flex flex-row gap-1.5">
 		{#each menuItems as item (item.title)}
-		<Button.Root href={`${item.href}`} class="{selectedItem === item.href && 'bg-slate-200'}
+		<a href={`${item.href}`} class="{selectedItem === item.href && 'bg-slate-200'}
 																	text-primary items-center rounded-3xl min-w-16 bg-slate-100
 		 															transition-all hover:bg-slate-200 flex-row flex gap-1.5 p-2 px-3.5 ">
 <!--	Render page icon		-->
-			{@html item.icon}
+			<img src='data:image/svg+xml,{item.icon}' alt={item.title} />
 			<p>
 				{item.title}
 			</p>
-		</Button.Root>
+		</a>
 		{/each}
 
 	</div>

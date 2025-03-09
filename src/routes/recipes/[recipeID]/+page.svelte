@@ -16,7 +16,7 @@
 
 <div class={`flex flex-col gap-2.5 ${dialogView || 'p-8 size-full items-center content-center'}`}>
 	<h2 class={`${dialogView && 'hidden'} text-center w-full text-3xl flex flex-row gap-1.5 items-center justify-center`}>
-		{@html data.recipe?.svgIcon}
+		<img src='data:image/svg+xml,{data.recipe?.svgIcon}' alt={data.recipe?.title} />
 		{data.recipe?.title}
 	</h2>
 

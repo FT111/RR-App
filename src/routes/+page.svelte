@@ -44,7 +44,7 @@
 						<div class="flex flex-row justify-between w-full">
 							<div class="scale-[1.35] origin-bottom-left text-muted-foreground-alt/100 text-opacity-100 opacity-100 group-hover:text-foreground-alt transition-colors">
 								{#if recipe.svgIcon}
-									{@html recipe.svgIcon}
+									<img src='data:image/svg+xml,{recipe.svgIcon}' alt={recipe.title} />
 								{/if}
 							</div>
 
