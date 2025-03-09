@@ -2,7 +2,7 @@ import {
 	type ExistingRecipeWithIngredientAndSteps,
 	insertRecipeOrUpdateIfExists
 } from '$lib/server/db/queries/recipes';
-import type { RequestHandler } from '../../../../../.svelte-kit/types/src/routes';
+import type { RequestHandler } from './$types';
 import { recipeHasValidationErrors } from '$lib/server/db/validation';
 
 export const PUT: RequestHandler = async ({ request }) => {

@@ -26,7 +26,7 @@ VITE_DATABASE_URL={...}
 2. Install dependencies: `npm install`
 3. Create a `.env` file in the root directory with the following content:
 ```
-VITE_LOCAL_DB_URL={...}
+VITE_LOCAL_DB_URL=file:{...}
 ```
 4. Run the app: `npm run dev` (or `npm run build` + `npm run preview` when deploying)
 5. Head to `http://localhost:5173`
