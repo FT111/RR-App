@@ -2,7 +2,6 @@ node_modules
 
 # Output
 .output
-.vercel
 .netlify
 .wrangler
 /.svelte-kit
@@ -25,3 +24,4 @@ vite.config.ts.timestamp-*
 # SQLite
 *.db
 /static/
+/.idea/
