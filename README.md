@@ -1,38 +1,47 @@
-# sv
+# recipe-app
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## Description
 
-## Creating a project
+A simple recipe viewer + editor web app.
 
-If you're seeing this, you've probably already done this step. Congrats!
+Built with SvelteKit/Svelte 5, Drizzle ORM, Tailwind v4 and Bits-UI
+<br />
+Intended for **SQLite 3**, but can be adapted to other databases.
 
-```bash
-# create a new project in the current directory
-npx sv create
+## 1. Install locally (Remote Database)
 
-# create a new project in my-app
-npx sv create my-app
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Create a `.env` file in the root directory with the following content:
 ```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+VITE_DATABASE_TOKEN={...}
+VITE_DATABASE_URL={...}
 ```
+4. Run the app: `npm run dev` (or `npm run build` + `npm run preview` when deploying)
+5. Head to `http://localhost:5173`
 
-## Building
+## 2. Install locally (Local Database)
 
-To create a production version of your app:
-
-```bash
-npm run build
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Create a `.env` file in the root directory with the following content:
 ```
+VITE_LOCAL_DB_URL={...}
+```
+4. Run the app: `npm run dev` (or `npm run build` + `npm run preview` when deploying)
+5. Head to `http://localhost:5173`
 
-You can preview the production build with `npm run preview`.
+## 3. Install with Docker
+Requires Docker (surprisingly) and Docker Compose 
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+1. Clone the repository
+2. Edit `docker-compose.yaml`, replacing the `VITE_DATABASE_TOKEN` and `VITE_DATABASE_URL` environment variables with your own.
+3. Run `docker compose up -d`
+4. Head to `http://localhost:3000` for the production build
+
+## Database Migration
+
+1. If needed, run the database generate script: `npm run db:generate`
+   - This will use the schema/locations specified in `drizzle.config.ts`
+   - Defaults to `src/lib/server/db/schema.ts`
+2. Run the migration: `npm run db:migrate`

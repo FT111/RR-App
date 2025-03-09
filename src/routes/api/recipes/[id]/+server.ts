@@ -1,5 +1,5 @@
 import { deleteRecipe } from '$lib/server/db/queries/recipes';
-import type { RequestHandler } from './$types';
+import type { RequestHandler } from '../../../../../../.svelte-kit/types/src/routes';
 
 export const DELETE: RequestHandler = async ({ params }) => {
 	const { id } = params;

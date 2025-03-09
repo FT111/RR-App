@@ -1,4 +1,4 @@
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from '../../../../../.svelte-kit/types/src/routes';
 import { db } from '$lib/server/db';
 import { Recipes } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';

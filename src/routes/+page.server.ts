@@ -1,6 +1,6 @@
 import * as schema from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from '../../../.svelte-kit/types/src/routes';
 import { getRecipes } from '$lib/server/db/queries/recipes';
 
 type recipeForm = {

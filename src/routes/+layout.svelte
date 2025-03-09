@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/state';
+	import { onNavigate } from '$app/navigation';
 
 	let { children } = $props();
 
@@ -25,7 +26,7 @@
 	let selectedItem = $derived(page.url.pathname);
 </script>
 
-<nav class="h-1/12 p-4 flex flex sticky top-0 gap-3 items-center w-full bg-background">
+<nav class="h-1/12 p-4 flex flex sticky top-0 gap-3 items-center w-full bg-background" style="view-transition-name: header;">
 	<h2 class="text-xl font-medium tracking-tight">Recipes</h2>
 	<div class="flex flex-row gap-1.5">
 		{#each menuItems as item (item.title)}

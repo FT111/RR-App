@@ -310,3 +310,39 @@
         @apply hover:text-foreground/80 focus-visible:ring-foreground focus-visible:ring-offset-background rounded-xs focus-visible:outline-hidden inline-flex items-center gap-1 font-medium underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-offset-2;
     }
 }
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+}
+
+@keyframes fade-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slide-from-bottom {
+    from {
+        transform: translateY(120px);
+    }
+}
+
+@keyframes slide-to-top {
+    to {
+        transform: translateY(-120px);
+    }
+}
+
+:root::view-transition-old(root) {
+    animation:
+            40ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+            150ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-top;
+}
+
+:root::view-transition-new(root) {
+    animation:
+            40ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+            150ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-bottom;
+}
