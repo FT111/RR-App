@@ -8,5 +8,5 @@ services:
     network_mode: "host"
     environment:
       - VITE_DATABASE_URL=https://rr-db-ft111.turso.io
-      - VITE_DATABASE_TOKEN=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDE1MjYxOTYsImlhdCI6MTc0MTUyMjU5NiwiaWQiOiI1ZDc5NTEyYi1hNjg5LTRlODQtYjczOC00NDlkZjAxNjgxZmMifQ.4_kq2NEOkD0yHYIopIHxlIy622H8qP3Ruq83aOdOIybgmmsbxaMErZh6td39KP2qedlvCE6I2dGSFn1mUj8FCA
+      - VITE_DATABASE_TOKEN=
 
