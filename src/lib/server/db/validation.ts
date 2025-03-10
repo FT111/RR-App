@@ -4,6 +4,8 @@ export const recipeHasValidationErrors = (
 	recipe: ExistingRecipeWithIngredientAndSteps,
 	newRecipe: boolean = false
 ) => {
+	if (!recipe) return 'Missing Recipe Data';
+
 	// No recipe ID specified and not a new recipe
 	if (!(recipe.id || newRecipe)) return 'Missing Recipe ID';
 	// Title not specified or too long

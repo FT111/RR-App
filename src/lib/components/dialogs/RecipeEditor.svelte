@@ -254,7 +254,7 @@
 			</div>
 			<div class="w-full flex flex-row justify-end p-2.5 bg-slate-50">
 				<div class="flex flex-row gap-2 items-center">
-					{#if isChanges}
+					{#if isChanges && selectedRecipe}
 						<button class="flex flex-row gap-2 items-center z-0 cursor-pointer hover:bg-slate-200 p-1.5 px-2.5 transition-colors rounded-3xl" transition:fly={{x:60, duration: 175, easing: quartOut}}
 										aria-label="Discard changes" onclick={()=>{
 										updatedRecipe = JSON.parse(JSON.stringify(selectedRecipe));
